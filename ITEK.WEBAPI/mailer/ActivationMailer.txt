@@ -1,0 +1,21 @@
+<html>
+<body>
+<table width="100%">
+<tr>
+<td align="center">
+Please click the bismillah picture  to activate
+</td>
+</tr>
+<tr>
+<td align="center">
+<a href="{0}"><img src="http://appquery.iteksolns.com/MailImags/BISMILLAH.JPG" width="600px" height="150px" /></a>
+</td>
+</tr>
+<tr>
+<td align="center">
+<p>We write this email with great pleasure about an application which connect the masses to the learned. <br/>All thanks to the ONE who gave us opportunity to serve the masses.</p>
+</td>
+</tr>
+</table>
+</body>
+</html>

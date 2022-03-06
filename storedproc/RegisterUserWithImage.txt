@@ -1,0 +1,96 @@
+USE [ATWKDb]
+GO
+/****** Object:  StoredProcedure [dbo].[RegisterUserWithImage]    Script Date: 14-Nov-21 12:34:28 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+alter procedure [dbo].[RegisterUserWithImage]  
+(  
+@username nvarchar(100),  
+@password nvarchar(100),  
+@name nvarchar(500),  
+@location nvarchar(200),  
+@mobileNumber nvarchar(20),  
+@nationality nvarchar(200),  
+@userType nvarchar(30),  
+@userStatus nvarchar(10),  
+@details nvarchar(max),  
+@age decimal(10,2),  
+@gender nvarchar(20),  
+@FileName nvarchar(max),  
+@ContentType nvarchar(100),  
+@Data varbinary(max),
+@Language nvarchar(50),
+@SpecialisationIn nvarchar(max),
+@StudiesAt nvarchar(max)  
+)  
+as  
+begin  
+  
+SET NoCount on;  
+declare @passphrase nvarchar(50) =newID();  
+DECLARE @id int  
+DECLARE @tblFileID int;  
+DECLARE @table table (id int)  
+DECLARE @tblFileIDTable table (id int)  
+  
+  
+  
+INSERT INTO tblFiles  
+           (FileName  
+           ,ContentType  
+           ,Data)  
+            OUTPUT inserted.ID into @tblFileIDTable  
+     VALUES  
+           (@FileName  
+           ,@ContentType  
+           ,@Data)  
+  
+  SELECT @tblFileID = id from @tblFileIDTable;  
+  
+INSERT INTO users  
+           (username  
+           ,userType  
+           ,password  
+           ,passphrase  
+           ,userStatus  
+           ,createdBy  
+           ,modifiedBy  
+           ,createdDate  
+           ,modifiedDate  
+           ,lastLoginTimeStamp)  
+           OUTPUT inserted.UserID into @table  
+     VALUES  
+     (@username,@userType,dbo.EncryptString(@passphrase,@password),@passphrase,  
+     @userStatus,0,0,getdate(),getdate(),getdate());  
+       
+     SELECT @id = id from @table  
+  
+INSERT INTO userProfile  
+           (userID  
+           ,name  
+           ,mobileNumber  
+           ,location  
+           ,nationality  
+           ,createdBy  
+           ,modifiedBy  
+           ,createdDate  
+           ,modifedDate  
+           ,details  
+           ,Age  
+           ,Gender  
+           ,ImageID
+           ,Language
+           ,SpecialisationIn
+           ,StudiesAt)  
+     VALUES  
+     (@id,@name,@mobileNumber,@location,@nationality,@id,0,  
+     getdate(),getdate(),@details,@age,@gender,@tblFileID,@Language,@SpecialisationIn,@StudiesAt);  
+       
+       
+     select u.*,(select [imageID] from [userProfile] where USERid=u.userID) as imgID  from users u where u.userID =@id  
+  
+end
+GO
+
